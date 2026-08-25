@@ -1,0 +1,6 @@
+- [x] Audit the native-mobile repository, Portal repository, and permanent website source to identify the correct GitHub ownership boundary.
+- [x] Verify the current order-placement workflow and define the server-authorized mobile order contract.
+- [x] Add a local-data order-placement preview to the permanent website and align the native iOS and Android flows.
+- [x] Validate Android compilation and document the required macOS/Xcode iOS testing process.
+- [ ] Update all relevant session logs, commit all source changes, and synchronize each repository to GitHub.
+- [ ] Deliver a precise feature-parity and testing summary with any remaining access blockers.

@@ -1,0 +1,27 @@
+# macOS and IDE metadata
+.DS_Store
+*.xcuserstate
+ios/**/xcuserdata/
+ios/**/DerivedData/
+ios/**/.swiftpm/
+
+# Android/Gradle build outputs and local SDK configuration
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+*.keystore
+*.jks
+
+# Local environment and release configuration
+.env
+.env.*
+!*.example
+
+# Native and static-site build products
+android/.gradle/
+android/app/build/
+ios/DerivedData/
+website/mobile-experience-preview/node_modules/
+website/mobile-experience-preview/dist/
+website/mobile-experience-preview/.manus-logs/

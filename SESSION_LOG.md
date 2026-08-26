@@ -47,3 +47,7 @@ The dedicated native repository, including the SwiftUI client, Kotlin/Jetpack Co
 The user requested a release-summary report, versioned release notes, GitHub Actions automation guidance, App Store and Google Play listing copy, privacy disclosure material, and a repository-safe record of prompts and responses. The native repository now includes `docs/MOBILE_RELEASE_SUMMARY.md`, `docs/releases/1.0.0-RELEASE_NOTES.md`, `docs/STORE_LISTING_AND_PRIVACY_WORKSHEET.md`, `docs/MOBILE_CICD_GUIDE.md`, the protected release-candidate workflow, and `docs/session/SESSION_TRANSCRIPT_2026-08-26.md`.
 
 The transcript preserves the actionable current-session requests and implementation responses while redacting credentials and sensitive tokens. It records that a GitHub credential was used temporarily for requested source synchronization and must be revoked/replaced because it was shared through chat.
+
+## 2026-08-26 — Release package publication
+
+The complete release-documentation package was published to `readypackets/readypackets-native-mobile` commit `c88efb4` (`docs: add mobile release and store submission package`). It includes the protected release-candidate workflow, non-secret staging endpoint configuration, signing-file exclusion, release notes, store listing and privacy worksheet, CI/CD guide, and redacted prompt/response transcript. No signing key, access token, or production environment secret was committed.

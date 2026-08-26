@@ -35,3 +35,5 @@ The Portal repository now owns the server-authoritative native catalog and idemp
 ## 2026-08-26 — Release documentation inclusion
 
 The dedicated native-mobile repository now contains the release summary, 1.0.0 release notes, store-listing and privacy worksheet, protected GitHub Actions release-candidate workflow, CI/CD setup guide, and a redacted session transcript. This website remains a local-data demonstration and is included in that repository as a self-hostable, non-production companion surface. The release documents and transcript are retained at the native repository root rather than in the public website build.
+
+The complete release-documentation package was published in native repository commit `c88efb4`. The permanent website source, local assets, deployment guide, and this website session log remain synchronized beneath `website/mobile-experience-preview/` in that repository.

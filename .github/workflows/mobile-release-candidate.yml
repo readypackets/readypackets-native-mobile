@@ -1,0 +1,126 @@
+name: Native mobile release candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      signed:
+        description: Build signed staging artifacts after protected-environment approval
+        required: true
+        default: false
+        type: boolean
+      release_label:
+        description: Human-readable release label, such as 1.0.0-rc.1
+        required: true
+        default: 1.0.0-rc.1
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-release-candidate-${{ inputs.release_label }}
+  cancel-in-progress: false
+
+jobs:
+  android-signed-bundle:
+    if: ${{ inputs.signed }}
+    name: Android signed App Bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: mobile-staging
+    env:
+      PORTAL_BASE_URL: ${{ vars.STAGING_PORTAL_BASE_URL }}
+      OAUTH_REDIRECT_URI: ${{ vars.ANDROID_STAGING_REDIRECT_URI }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install Android API 36 prerequisites
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"
+      - name: Materialize signing key outside the checkout
+        working-directory: android
+        run: |
+          test -n "$PORTAL_BASE_URL" && test -n "$OAUTH_REDIRECT_URI" && test -n "$ANDROID_KEYSTORE_BASE64" && test -n "$ANDROID_KEYSTORE_PASSWORD" && test -n "$ANDROID_KEY_ALIAS" && test -n "$ANDROID_KEY_PASSWORD"
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/readypackets-release.jks"
+          cat > keystore.properties <<EOF
+          storeFile=$RUNNER_TEMP/readypackets-release.jks
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          keyPassword=$ANDROID_KEY_PASSWORD
+          EOF
+      - name: Build and test signed release candidate
+        working-directory: android
+        run: |
+          ./gradlew --no-daemon :app:testDebugUnitTest :app:bundleRelease \
+            -PPORTAL_BASE_URL="$PORTAL_BASE_URL" \
+            -POAUTH_REDIRECT_URI="$OAUTH_REDIRECT_URI"
+      - name: Upload Android App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-${{ inputs.release_label }}-aab
+          path: android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
+          retention-days: 14
+
+  ios-signed-archive:
+    if: ${{ inputs.signed }}
+    name: iOS signed archive
+    runs-on: macos-15
+    timeout-minutes: 35
+    environment: mobile-staging
+    env:
+      PORTAL_BASE_URL: ${{ vars.STAGING_PORTAL_BASE_URL }}
+      OAUTH_REDIRECT_URI: ${{ vars.IOS_STAGING_REDIRECT_URI }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      APPLE_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
+      APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      APPLE_PROVISIONING_PROFILE_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install signing certificate and provisioning profile
+        run: |
+          test -n "$PORTAL_BASE_URL" && test -n "$OAUTH_REDIRECT_URI" && test -n "$APPLE_TEAM_ID" && test -n "$APPLE_CERTIFICATE_BASE64" && test -n "$APPLE_CERTIFICATE_PASSWORD" && test -n "$APPLE_PROVISIONING_PROFILE_BASE64" && test -n "$KEYCHAIN_PASSWORD"
+          CERTIFICATE_PATH="$RUNNER_TEMP/certificate.p12"
+          PROFILE_PATH="$RUNNER_TEMP/profile.mobileprovision"
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+          echo "$APPLE_CERTIFICATE_BASE64" | base64 --decode > "$CERTIFICATE_PATH"
+          echo "$APPLE_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$PROFILE_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERTIFICATE_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/"
+      - name: Archive signed iOS release candidate
+        working-directory: ios/ReadyPackets
+        run: |
+          sed "s/TEAM_ID_PLACEHOLDER/$APPLE_TEAM_ID/g" ci/ExportOptions.plist > "$RUNNER_TEMP/ExportOptions.plist"
+          xcodebuild -project ReadyPackets.xcodeproj -scheme ReadyPackets -configuration Release \
+            -archivePath "$RUNNER_TEMP/ReadyPackets.xcarchive" archive \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            PORTAL_BASE_URL="$PORTAL_BASE_URL" \
+            OAUTH_REDIRECT_URI="$OAUTH_REDIRECT_URI"
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/ReadyPackets.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" -exportPath "$RUNNER_TEMP/export"
+      - name: Upload iOS archive and IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-${{ inputs.release_label }}-archive
+          path: |
+            ${{ runner.temp }}/ReadyPackets.xcarchive
+            ${{ runner.temp }}/export/*.ipa
+          if-no-files-found: error
+          retention-days: 14
+
+# This workflow builds protected staging artifacts only. Store upload, TestFlight
+# distribution, Play-track promotion, and production rollout remain manual release-owner actions.

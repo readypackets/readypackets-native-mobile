@@ -1,8 +1,17 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
+}
+
+val portalBaseUrl = providers.gradleProperty("PORTAL_BASE_URL").orElse("https://portal.example.com").get()
+val oauthRedirectUri = providers.gradleProperty("OAUTH_REDIRECT_URI").orElse("https://mobile.example.com/auth/callback").get()
+val keystorePropertiesFile = file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) keystorePropertiesFile.inputStream().use(::load)
 }
 
 android {
@@ -16,8 +25,8 @@ android {
         versionCode = 1
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "PORTAL_BASE_URL", "\"https://portal.example.com\"")
-        buildConfigField("String", "OAUTH_REDIRECT_URI", "\"https://mobile.example.com/auth/callback\"")
+        buildConfigField("String", "PORTAL_BASE_URL", "\"${portalBaseUrl}\"")
+        buildConfigField("String", "OAUTH_REDIRECT_URI", "\"${oauthRedirectUri}\"")
     }
 
     buildFeatures { compose = true; buildConfig = true }
@@ -26,9 +35,23 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
     buildTypes {
         debug { applicationIdSuffix = ".debug"; versionNameSuffix = "-debug" }
-        release { isMinifyEnabled = true; proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro") }
+        release {
+            isMinifyEnabled = true
+            signingConfig = signingConfigs.findByName("release")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
     }
 }
 

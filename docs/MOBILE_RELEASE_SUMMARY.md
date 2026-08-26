@@ -1,0 +1,9 @@
+# ReadyPackets Mobile Release Summary
+
+ReadyPackets Mobile 1.0.0 is a native iOS and Android customer application that works with the self-hosted ReadyPackets Portal. It gives authenticated customers a secure mobile route to review authorized work, select listed business-packet options, record an order request, and follow the next Portal-controlled action.
+
+The release contains a SwiftUI iOS app and a Kotlin/Jetpack Compose Android app. Both use the same versioned mobile API contract and the same security model: browser-hosted sign-in with OAuth 2.1 and PKCE, short-lived access tokens, rotating refresh credentials, server-side device/session checks, and native protected credential storage. Each platform uses its own device-security conventions—Keychain and LocalAuthentication on iOS; Keystore-backed storage and BiometricPrompt on Android.
+
+Order placement is deliberately server-authoritative. A mobile client transmits selected public packet SKUs, bounded quantities, and an optional project name. The Portal decides whether the selections are available, resolves price and quote requirements, validates packet-group rules, records the audit event, sets payment status, and returns the permitted next action. Payment-card entry is never presented in the mobile client.
+
+The release is ready for staging distribution after the Portal mobile endpoints are deployed and staging links, OAuth redirect URIs, app signing, and privacy-policy routes are configured. Android unit validation has passed. iOS needs a macOS/Xcode archive, real-device Universal Link and biometric checks, and TestFlight distribution before App Store submission. The full release notes are in [`releases/1.0.0-RELEASE_NOTES.md`](releases/1.0.0-RELEASE_NOTES.md), and store metadata and privacy material is in [`STORE_LISTING_AND_PRIVACY_WORKSHEET.md`](STORE_LISTING_AND_PRIVACY_WORKSHEET.md).

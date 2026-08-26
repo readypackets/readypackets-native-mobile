@@ -1,0 +1,6 @@
+- [x] Audit the published native-mobile repository, Portal release controls, existing documentation, and privacy data boundary.
+- [x] Write the mobile release summary, versioned release notes, App Store listing, Google Play listing, and privacy-disclosure materials.
+- [x] Add repository-owned Android and iOS GitHub Actions workflows plus secret, signing, and release-environment setup instructions.
+- [x] Capture the current session’s user prompts and assistant responses in a redacted auditable record.
+- [ ] Validate documents and workflows, update the session log, commit all artifacts, and push them to GitHub.
+- [ ] Deliver the release-documentation locations, CI/CD instructions, and remaining owner actions.

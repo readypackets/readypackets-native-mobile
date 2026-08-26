@@ -18,3 +18,5 @@ The clients connect only to the self-hosted ReadyPackets mobile boundary at `/ap
 > The reference application supports customer work first. Customers can select listed packets and record an order request from either native app; the Portal verifies availability, pricing, payment, workflow activation, and the order record. High-impact administration, bulk data export, backup/restore, key management, refunds, payment collection, configuration, and platform control remain web-only.
 
 The complete shared order contract and iOS/Android test procedures are documented in [`docs/PLATFORM_PARITY_AND_TESTING.md`](docs/PLATFORM_PARITY_AND_TESTING.md).
+
+Release owners should begin with [`docs/MOBILE_RELEASE_SUMMARY.md`](docs/MOBILE_RELEASE_SUMMARY.md), then use the versioned release notes, the store-listing and privacy worksheet, and the protected GitHub Actions guide before any TestFlight or Play Console submission.

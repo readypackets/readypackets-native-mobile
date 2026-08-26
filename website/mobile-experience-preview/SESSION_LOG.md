@@ -31,3 +31,7 @@ The user will receive the permanent website source, deployable static build pack
 The user requested that all sources and session logs be synchronized to GitHub and that both native applications support customer order placement. The permanent website source, its local assets, Nginx deployment material, and this session log were added under `website/mobile-experience-preview/` in the dedicated `readypackets/readypackets-native-mobile` repository. The website remains a local-data demonstration and does not submit live orders.
 
 The Portal repository now owns the server-authoritative native catalog and idempotent order-submission endpoints. The native iOS and Android clients use that shared contract, while payments and custom quotes remain controlled through the secure Portal. The completed synchronization is recorded in the dedicated native and Portal session logs.
+
+## 2026-08-26 — Release documentation inclusion
+
+The dedicated native-mobile repository now contains the release summary, 1.0.0 release notes, store-listing and privacy worksheet, protected GitHub Actions release-candidate workflow, CI/CD setup guide, and a redacted session transcript. This website remains a local-data demonstration and is included in that repository as a self-hostable, non-production companion surface. The release documents and transcript are retained at the native repository root rather than in the public website build.

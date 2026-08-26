@@ -5,6 +5,8 @@
   <key>CFBundleIdentifier</key><string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
   <key>CFBundleShortVersionString</key><string>$(MARKETING_VERSION)</string>
   <key>CFBundleVersion</key><string>$(CURRENT_PROJECT_VERSION)</string>
+  <key>RPPortalBaseURL</key><string>$(PORTAL_BASE_URL)</string>
+  <key>RPOAuthRedirectURI</key><string>$(OAUTH_REDIRECT_URI)</string>
   <key>UILaunchScreen</key><dict><key>UIColorName</key><string>BrandNavy</string></dict>
   <key>NSMicrophoneUsageDescription</key><string>ReadyPackets uses the microphone only when you choose to record an audio response for an authorized workflow step.</string>
   <key>NSPhotoLibraryUsageDescription</key><string>ReadyPackets uses your selected photos only when you choose them for an authorized workflow upload.</string>

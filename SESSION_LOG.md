@@ -41,3 +41,9 @@ The dedicated native repository, including the SwiftUI client, Kotlin/Jetpack Co
 ---
 
 *This file is the mobile-repository portion of the required session record. The companion portal repository retains the preceding API implementation session log and server-side validation history.*
+
+## 2026-08-26 — Release documentation and redacted transcript
+
+The user requested a release-summary report, versioned release notes, GitHub Actions automation guidance, App Store and Google Play listing copy, privacy disclosure material, and a repository-safe record of prompts and responses. The native repository now includes `docs/MOBILE_RELEASE_SUMMARY.md`, `docs/releases/1.0.0-RELEASE_NOTES.md`, `docs/STORE_LISTING_AND_PRIVACY_WORKSHEET.md`, `docs/MOBILE_CICD_GUIDE.md`, the protected release-candidate workflow, and `docs/session/SESSION_TRANSCRIPT_2026-08-26.md`.
+
+The transcript preserves the actionable current-session requests and implementation responses while redacting credentials and sensitive tokens. It records that a GitHub credential was used temporarily for requested source synchronization and must be revoked/replaced because it was shared through chat.

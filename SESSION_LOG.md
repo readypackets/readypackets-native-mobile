@@ -34,6 +34,10 @@ Android validation passed with `testDebugUnitTest` on Java 17 and Android API 36
 
 The source for the permanent self-hosted ReadyPackets mobile-experience preview has been added at `website/mobile-experience-preview/`. It includes the interactive local-data browser demonstration, the self-hosted static asset set, Nginx configuration, deployment guide, project README, and the website-specific session log. The nested site has no Portal API, authentication, customer data, hosted analytics, or runtime dependency; its bundled assets are retained so it can be built and hosted without an external asset service.
 
+## 2026-08-26 — GitHub synchronization completed
+
+The dedicated native repository, including the SwiftUI client, Kotlin/Jetpack Compose client, shared API contract, design tokens, local self-hosted website source and assets, release documentation, and all available session logs, was published to `readypackets/readypackets-native-mobile`. The first published commit is `54c8890` (`feat: add native order placement and permanent mobile preview`). A subsequent documentation commit records the successful synchronization outcome.
+
 ---
 
 *This file is the mobile-repository portion of the required session record. The companion portal repository retains the preceding API implementation session log and server-side validation history.*

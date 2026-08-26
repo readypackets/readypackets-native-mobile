@@ -25,3 +25,9 @@ The final self-hosted handoff archive is `ReadyPackets-Mobile-Experience-Preview
 ## Response summary
 
 The user will receive the permanent website source, deployable static build package, self-hosted asset package, checksums, and deployment instructions. Publishing to GitHub requires a repository write credential, which was not available in the earlier repository-split session.
+
+## 2026-08-26 — Source synchronization and native order-placement handoff
+
+The user requested that all sources and session logs be synchronized to GitHub and that both native applications support customer order placement. The permanent website source, its local assets, Nginx deployment material, and this session log were added under `website/mobile-experience-preview/` in the dedicated `readypackets/readypackets-native-mobile` repository. The website remains a local-data demonstration and does not submit live orders.
+
+The Portal repository now owns the server-authoritative native catalog and idempotent order-submission endpoints. The native iOS and Android clients use that shared contract, while payments and custom quotes remain controlled through the secure Portal. The completed synchronization is recorded in the dedicated native and Portal session logs.

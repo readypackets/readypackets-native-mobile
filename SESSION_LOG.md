@@ -73,3 +73,7 @@ The complete release-documentation package was published to `readypackets/readyp
 **Boundary:** The browser preview cannot record audio, contact a Portal, register a real device, cache a real document, or perform payment. The native Android APK can exercise those device paths only after it is configured against a non-production Portal environment. No Portal records, credentials, card data, provider credential, or signing material is included in the preview source or test artifact.
 
 **GitHub synchronization:** The completed preview, encrypted offline-document source, scoped FileProvider configuration, debug-cache unit test, bundled self-hosted assets, technical review, and redacted transcript were published to `readypackets/readypackets-native-mobile` in commit `f47df07` on 2026-08-27. The repository was fetched and rebased before publication; the published `main` head was verified clean afterward.
+
+## 2026-08-27 — Customer preview visual refinement
+
+The local-data customer-app preview was refined after mobile visual verification. It now leads with the interactive device on small screens, uses full-width operational evidence rows instead of a compressed sidebar treatment, carries the Packet Gold identity through the wordmark and briefing, and replaces generic infrastructure imagery with an explicit customer-device-to-Portal route diagram. The preview type check and static build passed. The source, website log, and testing checklist are synchronized into the native repository as the final preview update.

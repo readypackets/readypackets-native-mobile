@@ -45,3 +45,9 @@ The user requested an updated, testable view of the expanded customer applicatio
 The Android app now supports an explicit **Keep offline** action for Portal-authorized customer documents. Encrypted document bytes and encrypted cache-index metadata are stored privately, a temporary scoped `FileProvider` grant opens a selected cached file, and sign-out clears the cache. Android `testDebugUnitTest` and `assembleDebug` passed after this implementation. The testable debug APK and technical endpoint/audio review are delivered outside the repository as release artifacts; the updated source and this session log are synchronized to the native repository.
 
 The synchronized native repository commit is `f47df07`. It includes this latest website session record, the refreshed local-data customer-app preview, all self-hosted visual assets, and the related redacted prompt/response transcript.
+
+## 2026-08-27 — Final customer-preview layout correction
+
+An independent mobile visual review identified that the evidence column was visually collapsing in the narrow hero composition. The preview was refined so the live phone appears before explanatory copy on small screens, the briefing evidence is rendered as full-width operational rows, the packet mark has stronger wordmark treatment, and the deployment visual is a controlled client-to-Portal packet diagram rather than generic abstract infrastructure art.
+
+The updated React preview passed `pnpm check` and `pnpm build`. The source is synchronized as a self-hosted website component under the native repository after this checkpoint.

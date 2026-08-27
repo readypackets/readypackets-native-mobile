@@ -77,3 +77,11 @@ The complete release-documentation package was published to `readypackets/readyp
 ## 2026-08-27 — Customer preview visual refinement
 
 The local-data customer-app preview was refined after mobile visual verification. It now leads with the interactive device on small screens, uses full-width operational evidence rows instead of a compressed sidebar treatment, carries the Packet Gold identity through the wordmark and briefing, and replaces generic infrastructure imagery with an explicit customer-device-to-Portal route diagram. The preview type check and static build passed. The source, website log, and testing checklist are synchronized into the native repository as the final preview update.
+
+## 2026-08-27 — Staging Android artifact and customer checkout handoff
+
+**User request:** The user requested a staging Portal environment, an Android debug APK direct download, and refinement of the Portal invoice and payment experience without moving card data into ReadyPackets.
+
+**Native deliverable:** `docs/ANDROID_PHYSICAL_DEVICE_TESTING.md` defines the approved device sequence for a debug artifact: staged OAuth/App Link configuration, microphone recording, opt-in encrypted offline document cache, hosted test-mode checkout, in-app updates, and sign-out cleanup. The current APK was assembled from the validated customer application and its SHA-256 digest was checked before release. It has non-production placeholder endpoints; a release owner must make a separate staging-configured debug build before it can authenticate a real staging customer.
+
+**Security boundary:** The Android app opens the verified system-browser checkout URL and never handles card data. Staging credentials, Firebase configuration, provider credentials, signed release keys, customer data, and private device identifiers are not in Git. The staging server runbook remains Portal-owned because its data, encryption, payment-webhook, and customer-role controls must stay independent of a test-device build.

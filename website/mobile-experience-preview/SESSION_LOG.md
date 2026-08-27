@@ -51,3 +51,7 @@ The synchronized native repository commit is `f47df07`. It includes this latest 
 An independent mobile visual review identified that the evidence column was visually collapsing in the narrow hero composition. The preview was refined so the live phone appears before explanatory copy on small screens, the briefing evidence is rendered as full-width operational rows, the packet mark has stronger wordmark treatment, and the deployment visual is a controlled client-to-Portal packet diagram rather than generic abstract infrastructure art.
 
 The updated React preview passed `pnpm check` and `pnpm build`. The source is synchronized as a self-hosted website component under the native repository after this checkpoint.
+
+## 2026-08-27 — Staging and physical-device customer-test support
+
+The user requested a staging environment for real customer permissions and workflow-stage testing, a direct Android debug APK download, and a clearer invoice and secure checkout experience. The self-hosted Portal repository now contains a staging environment template, isolated Docker Compose override, and runbook. Its customer checkout page clearly transfers card entry to a Stripe-hosted browser page and makes webhook-confirmed Portal status authoritative. The native repository contains the physical-device Android test guide and redacted prompt/response record. Those sources were published under their respective repositories; this permanent preview remains representative local data only and is not connected to the staging environment.

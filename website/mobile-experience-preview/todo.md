@@ -4,3 +4,10 @@
 - [x] Validate Android compilation and document the required macOS/Xcode iOS testing process.
 - [x] Update all relevant session logs, commit all source changes, and synchronize each repository to GitHub.
 - [x] Deliver a precise feature-parity and testing summary with any remaining access blockers.
+- [x] Audit the canonical Portal deployment configuration, environment variables, invoice flow, and reachable staging infrastructure.
+- [x] Create a self-hosted staging configuration, non-production test data procedure, and release-owner secret checklist without committing credentials.
+- [x] Refine the Portal customer invoice review and system-browser checkout handoff while retaining server-authoritative payment status.
+- [x] Assemble a current Android debug APK and package physical-device audio and offline-document verification steps.
+- [ ] Validate the staging package and updated Portal customer payment journey, then update all session records.
+- [ ] Commit and synchronize the staging, invoice, APK, and session-log updates to GitHub.
+- [ ] Deliver the staging setup outcome, direct Android test artifact, and any remaining operator actions.

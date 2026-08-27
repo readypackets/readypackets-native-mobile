@@ -21,3 +21,7 @@ The Android application received an explicit encrypted offline-document workspac
 ## Security and release conditions
 
 The technical review records Portal-hosted checkout handoff and device registration beneath `/api/mobile/v1`; neither native app handles payment-card data. Real APNs/FCM configuration, iOS hardware validation, verified link setup, Portal migration, staging account permission checks, and release signing remain release-owner responsibilities. No secret or customer data was written to this transcript.
+
+## Publication outcome
+
+The source, self-hosted preview update, assets, Android encrypted offline-workspace implementation, technical review, and these redacted records were committed and synchronized to the dedicated native repository in commit `f47df07`. The published repository contains source and documentation only; the debug APK is delivered as a separate test artifact and is not committed to version control.

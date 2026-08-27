@@ -39,7 +39,7 @@ struct UnlockView: View {
 
 struct MainTabs: View {
     var body: some View {
-        TabView { HomeView().tabItem { Label("Home", systemImage: "house") }; OrdersView().tabItem { Label("Orders", systemImage: "tray.full") }; ReservedFeatureView(title: "Messages", icon: "bubble.left.and.bubble.right", description: "Your secure messages will appear here after the messaging API is enabled for this release.").tabItem { Label("Messages", systemImage: "bubble.left.and.bubble.right") }; ReservedFeatureView(title: "Notifications", icon: "bell", description: "Your notification inbox will appear here after device notification registration is enabled.").tabItem { Label("Notifications", systemImage: "bell") }; ProfileView().tabItem { Label("Profile", systemImage: "person") } }.tint(Brand.teal)
+        TabView { HomeView().tabItem { Label("Home", systemImage: "house") }; OrdersView().tabItem { Label("Orders", systemImage: "tray.full") }; MessagesView().tabItem { Label("Messages", systemImage: "bubble.left.and.bubble.right") }; NotificationsView().tabItem { Label("Updates", systemImage: "bell") }; CustomerServicesView().tabItem { Label("More", systemImage: "square.grid.2x2") } }.tint(Brand.teal)
     }
 }
 

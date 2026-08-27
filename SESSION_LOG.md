@@ -51,3 +51,13 @@ The transcript preserves the actionable current-session requests and implementat
 ## 2026-08-26 — Release package publication
 
 The complete release-documentation package was published to `readypackets/readypackets-native-mobile` commit `c88efb4` (`docs: add mobile release and store submission package`). It includes the protected release-candidate workflow, non-secret staging endpoint configuration, signing-file exclusion, release notes, store listing and privacy worksheet, CI/CD guide, and redacted prompt/response transcript. No signing key, access token, or production environment secret was committed.
+
+## 2026-08-27 — Full customer mobile-parity expansion
+
+**User request:** The user requested that customers choose either native app or web Portal for customer use, with administration remaining web-only, and requested GitHub-synchronized context/session records.
+
+**Completed:** The iOS SwiftUI and Android Jetpack Compose customer apps now expose matching customer work surfaces: documents, deliverables, AAC-LC/M4A recordings, protected media upload/download/playback, workflow actions, intake submission, Portal-hosted invoice/payment handoff, messages, updates, support, community, Packet Collective workspaces, referrals, knowledge, FAQ, public packet/legal/contact entry, and system-browser account-security/recovery actions. Sensitive identity and payment flows remain in the verified Portal system-browser session by design.
+
+**Push and privacy:** iOS registers APNs tokens through the application delegate after authorization; Android registers FCM tokens after authenticated startup and token rotation. Provider credentials and Android `google-services.json` stay untracked. Customer audio/documents are staged privately and only transmitted over authenticated HTTPS to Portal-controlled authorization, retention, and encryption services.
+
+**Validation:** Android `testDebugUnitTest` passed on Java 17/Android API 36 after the customer expansion. iOS source requires macOS/Xcode compilation, entitlement, APNs, microphone/audio, biometric, Universal Link, and TestFlight validation. The detailed safe deployment and parity conditions are in `docs/MOBILE_CUSTOMER_PARITY_STATUS.md`; this session record is preserved in `docs/session/SESSION_TRANSCRIPT_2026-08-27_CUSTOMER_PARITY.md`.

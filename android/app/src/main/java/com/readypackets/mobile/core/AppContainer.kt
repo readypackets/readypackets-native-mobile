@@ -27,7 +27,7 @@ class AppContainer(private val context: Context) : ViewModel() {
             context,
             api,
             tokenStore,
-            { mutableState.value = AppState.SignedIn },
+            { mutableState.value = AppState.SignedIn; viewModelScope.launch { PushRegistrar(context, api).register() } },
             { mutableState.value = AppState.SignedOut; mutableState.value = AppState.Error(it) },
         )
         coordinator.begin()

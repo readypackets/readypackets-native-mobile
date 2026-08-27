@@ -17,10 +17,7 @@ final class AuthCoordinator {
     init(api: MobileAPIClient, tokenStore: TokenStore) {
         self.api = api
         self.tokenStore = tokenStore
-        installationID = UserDefaults.standard.string(forKey: "rp.installation.id")
-            ?? UUID().uuidString.lowercased().also {
-                UserDefaults.standard.set($0, forKey: "rp.installation.id")
-            }
+        installationID = DeviceInstallation.id
     }
 
     func begin() async throws {
@@ -133,8 +130,4 @@ private extension Data {
             .replacingOccurrences(of: "/", with: "_")
             .replacingOccurrences(of: "=", with: "")
     }
-}
-
-private extension String {
-    func also(_ body: (String) -> Void) -> String { body(self); return self }
 }

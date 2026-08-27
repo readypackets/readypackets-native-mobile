@@ -29,6 +29,38 @@ actor MobileAPIClient {
         try await request(path: path, method: "POST", body: body, idempotencyKey: idempotencyKey.uuidString, as: type)
     }
 
+    func put<T: Decodable>(_ path: String, body: Encodable, idempotencyKey: UUID = UUID(), as type: T.Type) async throws -> T {
+        try await request(path: path, method: "PUT", body: body, idempotencyKey: idempotencyKey.uuidString, as: type)
+    }
+
+    func delete<T: Decodable>(_ path: String, idempotencyKey: UUID = UUID(), as type: T.Type) async throws -> T {
+        try await request(path: path, method: "DELETE", body: nil, idempotencyKey: idempotencyKey.uuidString, as: type)
+    }
+
+    func getData(_ path: String) async throws -> Data {
+        try await binaryRequest(path: path, method: "GET", body: nil, contentType: nil, idempotencyKey: nil)
+    }
+
+    func upload(_ path: String, files: [URL], fields: [String: String], idempotencyKey: UUID = UUID()) async throws -> CustomerFilesPage {
+        let boundary = "ReadyPackets-\(UUID().uuidString)"
+        var body = Data()
+        for (key, value) in fields {
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n\(value)\r\n".data(using: .utf8)!)
+        }
+        for file in files {
+            let data = try Data(contentsOf: file)
+            let name = file.lastPathComponent.replacingOccurrences(of: "\"", with: "_")
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"files\"; filename=\"\(name)\"\r\n".data(using: .utf8)!)
+            body.append("Content-Type: \(mimeType(for: file))\r\n\r\n".data(using: .utf8)!)
+            body.append(data); body.append("\r\n".data(using: .utf8)!)
+        }
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        let data = try await binaryRequest(path: path, method: "POST", body: body, contentType: "multipart/form-data; boundary=\(boundary)", idempotencyKey: idempotencyKey.uuidString)
+        return try decoder.decode(CustomerFilesPage.self, from: data)
+    }
+
     func revoke() async {
         guard let refresh = await tokenStore.refreshToken else { return }
         var request = URLRequest(url: AppConfig.portalBaseURL.appending(path: "/api/mobile/v1/revoke"))
@@ -54,6 +86,24 @@ actor MobileAPIClient {
         return try decode(T.self, data: data, response: response)
     }
 
+    private func binaryRequest(path: String, method: String, body: Data?, contentType: String?, idempotencyKey: String?, attemptedRefresh: Bool = false) async throws -> Data {
+        let access = try await validAccessToken()
+        var request = URLRequest(url: AppConfig.portalBaseURL.appending(path: "/api/mobile/v1" + path))
+        request.httpMethod = method
+        request.setValue("Bearer \(access)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        if let contentType { request.setValue(contentType, forHTTPHeaderField: "Content-Type") }
+        if let idempotencyKey { request.setValue(idempotencyKey, forHTTPHeaderField: "Idempotency-Key") }
+        request.httpBody = body
+        let (data, response) = try await session.data(for: request)
+        if let http = response as? HTTPURLResponse, http.statusCode == 401, !attemptedRefresh {
+            _ = try await refresh()
+            return try await binaryRequest(path: path, method: method, body: body, contentType: contentType, idempotencyKey: idempotencyKey, attemptedRefresh: true)
+        }
+        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else { throw (try? decoder.decode(APIProblem.self, from: data)) ?? APIProblem(title: "Request failed", code: "http_error", detail: nil) }
+        return data
+    }
+
     private func validAccessToken() async throws -> String {
         if let token = await tokenStore.accessToken, let expiry = await tokenStore.accessTokenExpiry, expiry > Date() { return token }
         return try await refresh().accessToken
@@ -70,6 +120,19 @@ actor MobileAPIClient {
         guard let http = response as? HTTPURLResponse else { throw URLError(.badServerResponse) }
         guard (200...299).contains(http.statusCode) else { throw (try? decoder.decode(APIProblem.self, from: data)) ?? APIProblem(title: "Request failed", code: "http_\(http.statusCode)", detail: nil) }
         return try decoder.decode(T.self, from: data)
+    }
+
+    private func mimeType(for url: URL) -> String {
+        switch url.pathExtension.lowercased() {
+        case "m4a": return "audio/mp4"
+        case "webm": return "audio/webm"
+        case "mp3": return "audio/mpeg"
+        case "wav": return "audio/wav"
+        case "pdf": return "application/pdf"
+        case "png": return "image/png"
+        case "jpg", "jpeg": return "image/jpeg"
+        default: return "application/octet-stream"
+        }
     }
 }
 

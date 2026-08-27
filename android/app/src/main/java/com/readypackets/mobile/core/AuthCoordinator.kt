@@ -17,12 +17,7 @@ class AuthCoordinator(
 ) {
     private var state: String? = null
     private var verifier: String? = null
-    private val installationId = context.getSharedPreferences("readypackets_installation", Context.MODE_PRIVATE)
-        .getString("id", null)
-        ?: java.util.UUID.randomUUID().toString().lowercase().also {
-            context.getSharedPreferences("readypackets_installation", Context.MODE_PRIVATE)
-                .edit().putString("id", it).apply()
-        }
+    private val installationId = PushRegistrar.installationId(context)
 
     fun begin() {
         val newState = Pkce.state()

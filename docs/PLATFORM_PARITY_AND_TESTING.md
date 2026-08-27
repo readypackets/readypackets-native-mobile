@@ -1,6 +1,6 @@
 # iOS and Android Parity and Pre-Publication Testing
 
-The ReadyPackets native clients share one **mobile API contract** and support the same customer business flows: browser-based sign-in, device-bound credential storage, biometric re-entry, dashboard review, order review, packet selection, order submission, Portal-managed payment handoff, device review, and deletion request. The clients are not intended to be pixel-identical; each uses its platform’s expected navigation, secure-storage, and biometric affordances.
+The ReadyPackets native clients share one **mobile API contract** and support the same customer business flows: browser-based sign-in, device-bound credential storage, biometric re-entry, dashboard review, order review, packet selection, order submission, Portal-managed payment handoff, document and deliverable handling, AAC/M4A audio recording/upload/playback, authorised workflow actions, messages, updates, support, community, Packet Collective workspaces, referrals, knowledge, FAQs, and secure browser entry points for sensitive account actions. The clients are not intended to be pixel-identical; each uses its platform’s expected navigation, secure-storage, and biometric affordances.
 
 | Customer capability | iOS | Android | Shared authority |
 |---|---|---|---|
@@ -10,6 +10,10 @@ The ReadyPackets native clients share one **mobile API contract** and support th
 | Select packet and create an order | SwiftUI order composer | Jetpack Compose order composer | `GET /catalog` and idempotent `POST /orders` |
 | Price, payment, and activation | Displays Portal result only | Displays Portal result only | Portal resolves product availability, pricing, workflow, payment status, audit event, and activation; the app never receives card data |
 | Account and devices | Profile, device list, deletion-request guard | Profile, device list, deletion-request guard | Mobile device and account endpoints |
+| Files, audio, and deliverables | File importer, AAC/M4A recorder, playback and share/download handoff | Document selector, AAC/M4A recorder, playback and app-private download | Customer-only stage capabilities, encrypted Portal storage, and opaque file references |
+| Workflow, intake, invoices, and payment | Current-stage actions, intake save, invoice retrieval, system-browser hosted checkout | Current-stage actions, intake save, invoice retrieval, system-browser hosted checkout | Portal authorizes workflow records; card data never enters the app |
+| Messages, notifications, support, community | Native inbox/service hub | Native inbox/service hub | Customer-only mobile adapter; published/moderated Portal content and staff-side service controls |
+| Workspaces, referrals, knowledge, policies, public help | Native service surfaces plus system-browser identity controls | Native service surfaces plus system-browser identity controls | Portal ownership/member rules and existing identity/legal controls |
 
 ## Order placement boundary
 
@@ -27,7 +31,7 @@ JAVA_HOME=/path/to/jdk-17 ANDROID_HOME=/path/to/android-sdk ./gradlew testDebugU
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-After installation, test secure sign-in, a listed packet selection, an idempotent order retry, the custom-quote response, the payment-required response, an order-list refresh, device registration, sign-out, and biometric re-entry. Use a staging account and non-production catalog data only.
+After installation, test secure sign-in, a listed packet selection, an idempotent order retry, the custom-quote response, the payment-required response, document selection, microphone permission and AAC/M4A recording, authorised upload/playback, deliverable and invoice retrieval, message/ticket submission, community/workspace/referral actions, secure browser entry points, device registration, sign-out, and biometric re-entry. Use a staging account and non-production catalog data only.
 
 ## iOS test path
 
@@ -36,7 +40,7 @@ Build iOS on a macOS host with a current Xcode release, an Apple development tea
 1. Open `ios/ReadyPackets/ReadyPackets.xcodeproj` in Xcode and select a development signing team.
 2. Set the staging `PORTAL_BASE_URL`, matching OAuth redirect URI, and associated domain according to `AppConfig.swift` and your Xcode build settings.
 3. Run on both a simulator for layout/accessibility work and a physical device for Universal Link, Keychain, and biometric validation.
-4. Archive a signed staging build, distribute it to internal testers through TestFlight, and test sign-in, ordering, Portal payment handoff, device revocation, logout, and restoration from a cold launch.
+4. Archive a signed staging build, distribute it to internal testers through TestFlight, and test sign-in, ordering, Portal payment handoff, documents, AAC/M4A recording/playback, workflow submissions, messages, tickets, community/workspaces/referrals, device revocation, logout, and restoration from a cold launch.
 
 Apple’s TestFlight workflow and Android’s device-testing guidance are maintained in their official documentation. [1] [2]
 

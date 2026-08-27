@@ -1,8 +1,11 @@
 import SwiftUI
+import UIKit
+import UserNotifications
 
 @main
 struct ReadyPacketsApp: App {
     @StateObject private var container = AppContainer()
+    @UIApplicationDelegateAdaptor(PushAppDelegate.self) private var pushDelegate
 
     var body: some Scene {
         WindowGroup {
@@ -13,6 +16,9 @@ struct ReadyPacketsApp: App {
                     Task { await container.handleCallback(url) }
                 }
                 .task { await container.restore() }
+                .onReceive(NotificationCenter.default.publisher(for: .readyPacketsPushToken)) { notification in
+                    if let token = notification.object as? Data { Task { await container.registerAPNSToken(token) } }
+                }
         }
     }
 }
@@ -42,7 +48,7 @@ final class AppContainer: ObservableObject {
     }
 
     func handleCallback(_ url: URL) async {
-        do { try await auth.complete(with: url); state = .signedIn }
+        do { try await auth.complete(with: url); state = .signedIn; await requestPushAuthorization() }
         catch { state = .signedOut; toast = error.localizedDescription }
     }
 
@@ -51,4 +57,25 @@ final class AppContainer: ObservableObject {
         await tokenStore.wipe()
         state = .signedOut
     }
+
+    func requestPushAuthorization() async {
+        guard await tokenStore.refreshToken != nil else { return }
+        let granted = (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound])) ?? false
+        guard granted else { return }
+        UIApplication.shared.registerForRemoteNotifications()
+    }
+
+    func registerAPNSToken(_ token: Data) async {
+        guard await tokenStore.refreshToken != nil else { return }
+        let value = token.map { String(format: "%02x", $0) }.joined()
+        _ = try? await api.post("/devices", body: DeviceRegistration(deviceId: DeviceInstallation.id, platform: "ios", appVersion: AppConfig.appVersion, deviceName: DeviceInstallation.name, pushPlatform: "apns", pushToken: value), as: DeviceRegistrationReply.self)
+    }
 }
+
+final class PushAppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationCenter.default.post(name: .readyPacketsPushToken, object: deviceToken)
+    }
+}
+
+extension Notification.Name { static let readyPacketsPushToken = Notification.Name("ReadyPacketsPushToken") }

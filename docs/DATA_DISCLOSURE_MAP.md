@@ -12,4 +12,4 @@ This is a release-owned inventory rather than a claim that the listed data is al
 | Notification token | Deliver generic alerts chosen by the user | Platform-managed token | ReadyPackets API then APNs/FCM | Identifiers / app functionality |
 | Privacy-scrubbed diagnostics | Optional operational troubleshooting only after policy approval | No raw PII or content | ReadyPackets self-hosted endpoint only | Diagnostics if enabled |
 
-The application contains **no advertising SDK, tracking identifier, hosted analytics service, Manus integration, Manus SDK, Manus credential, or Manus runtime dependency**.
+The application contains **no advertising SDK, tracking identifier, hosted analytics service, Manus integration, Manus SDK, Manus credential, or Manus runtime dependency**. The Portal stores a one-way notification-token hash for deduplication plus an encrypted token available only to the self-hosted APNs/FCM dispatcher; neither token representation is returned to the client. Final store disclosures must be reconciled after APNs/FCM configuration and retention-policy approval.

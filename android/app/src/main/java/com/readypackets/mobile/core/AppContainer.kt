@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 class AppContainer(private val context: Context) : ViewModel() {
     private val tokenStore = SecureTokenStore(context)
+    private val documentCache = DocumentCache(context)
     private val api = MobileApiClient(tokenStore)
     private lateinit var coordinator: AuthCoordinator
     private val mutableState = MutableStateFlow<AppState>(if (tokenStore.refreshToken == null) AppState.SignedOut else AppState.Locked)
@@ -33,6 +34,7 @@ class AppContainer(private val context: Context) : ViewModel() {
         coordinator.begin()
     }
     fun completeAuthorization(uri: android.net.Uri) { if (::coordinator.isInitialized) coordinator.complete(uri) }
-    fun logout() { viewModelScope.launch { api.revoke(); tokenStore.wipe(); mutableState.value = AppState.SignedOut } }
+    fun logout() { viewModelScope.launch { api.revoke(); documentCache.clear(); tokenStore.wipe(); mutableState.value = AppState.SignedOut } }
     fun api(): MobileApiClient = api
+    fun documentCache(): DocumentCache = documentCache
 }

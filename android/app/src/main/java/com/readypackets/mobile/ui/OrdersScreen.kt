@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.readypackets.mobile.core.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -72,8 +73,10 @@ private fun CustomerOrderDetailScreen(container: AppContainer, summary: OrderSum
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val recorder = remember { AudioCapture() }
+    val documentCache = remember { container.documentCache() }
     var detail by remember { mutableStateOf<CustomerOrderDetail?>(null) }
     var files by remember { mutableStateOf<List<CustomerFile>>(emptyList()) }
+    var offlineRefs by remember { mutableStateOf<Set<String>>(emptySet()) }
     var invoice by remember { mutableStateOf<Invoice?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
     var message by remember { mutableStateOf("") }
@@ -85,7 +88,10 @@ private fun CustomerOrderDetailScreen(container: AppContainer, summary: OrderSum
         container.api().get<CustomerOrderDetail>("/customer/orders/${summary.publicOrderId}/detail")
             .onSuccess { detail = it }.onFailure { error = it.message }
         container.api().get<CustomerFilesPage>("/customer/orders/${summary.publicOrderId}/files")
-            .onSuccess { files = it.items }.onFailure { error = it.message }
+            .onSuccess {
+                files = it.items
+                offlineRefs = it.items.filter { file -> documentCache.isCached(file.mobileFileRef) }.map { it.mobileFileRef }.toSet()
+            }.onFailure { error = it.message }
         container.api().get<Invoice>("/customer/orders/${summary.publicOrderId}/invoice")
             .onSuccess { invoice = it }
     }
@@ -98,6 +104,23 @@ private fun CustomerOrderDetailScreen(container: AppContainer, summary: OrderSum
             mapOf("phase" to phaseKey, "recordedAudio" to recordedAudio.toString(), "prerecordedAudio" to "false"),
         ).onSuccess { files = files + it.items }.onFailure { error = it.message }
         localFiles.forEach { it.delete() }
+    }
+    fun openOffline(file: CustomerFile) {
+        documentCache.read(file.mobileFileRef).onSuccess { bytes ->
+            runCatching {
+                val suffix = file.extension?.takeIf { it.startsWith(".") } ?: ".bin"
+                val temporary = File.createTempFile("readypackets-offline-", suffix, context.cacheDir)
+                temporary.writeBytes(bytes)
+                val contentUri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", temporary)
+                val mime = when (file.extension?.lowercase()) {
+                    ".pdf" -> "application/pdf"
+                    ".jpg", ".jpeg" -> "image/jpeg"
+                    ".png" -> "image/png"
+                    else -> "application/octet-stream"
+                }
+                context.startActivity(Intent(Intent.ACTION_VIEW).setDataAndType(contentUri, mime).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION))
+            }.onFailure { error = "An offline viewer could not be opened on this device." }
+        }.onFailure { error = it.message }
     }
     val documents = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
         if (uris.isNotEmpty()) scope.launch {
@@ -168,11 +191,16 @@ private fun CustomerOrderDetailScreen(container: AppContainer, summary: OrderSum
                                 player?.release(); player = MediaPlayer().apply { setDataSource(local.absolutePath); prepare(); start() }
                             }.onFailure { error = it.message }
                         } }) { Text("Play") }
-                        TextButton(onClick = { scope.launch {
-                            container.api().getBytes("/customer/files/${file.mobileFileRef}/content").onSuccess { bytes ->
-                                File(context.getExternalFilesDir("downloads"), file.originalName).apply { parentFile?.mkdirs(); writeBytes(bytes) }
-                            }.onFailure { error = it.message }
-                        } }) { Text("Save") }
+                        TextButton(onClick = {
+                            if (offlineRefs.contains(file.mobileFileRef)) openOffline(file)
+                            else scope.launch {
+                                container.api().getBytes("/customer/files/${file.mobileFileRef}/content").onSuccess { bytes ->
+                                    documentCache.save(file.mobileFileRef, file.originalName, bytes)
+                                        .onSuccess { offlineRefs = offlineRefs + file.mobileFileRef }
+                                        .onFailure { error = it.message }
+                                }.onFailure { error = it.message }
+                            }
+                        }) { Text(if (offlineRefs.contains(file.mobileFileRef)) "Open offline" else "Keep offline") }
                     }
                 }
             }

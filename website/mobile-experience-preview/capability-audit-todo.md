@@ -1,0 +1,3 @@
+- [x] Inspect the iOS and Android audio recording, encoding, and upload implementations.
+- [x] Compare the released mobile client feature set with the ReadyPackets Portal web application.
+- [ ] Deliver verified audio-format details, unavailable mobile features, and implementation caveats.

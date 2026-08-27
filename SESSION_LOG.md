@@ -63,3 +63,11 @@ The complete release-documentation package was published to `readypackets/readyp
 **Validation:** Android `testDebugUnitTest` passed on Java 17/Android API 36 after the customer expansion. iOS source requires macOS/Xcode compilation, entitlement, APNs, microphone/audio, biometric, Universal Link, and TestFlight validation. The detailed safe deployment and parity conditions are in `docs/MOBILE_CUSTOMER_PARITY_STATUS.md`; this session record is preserved in `docs/session/SESSION_TRANSCRIPT_2026-08-27_CUSTOMER_PARITY.md`.
 
 **GitHub synchronization:** The complete native customer-parity implementation was published to `readypackets/readypackets-native-mobile` commit `8106c30` on 2026-08-27. The matching self-hosted Portal customer API, encrypted push-token migration, OpenAPI contract, and enforcement tests were published to `readypackets/ReadyPackets` commit `e735f89`. No provider credential, signing material, or payment-card data was committed.
+
+## 2026-08-27 — Customer preview, offline workspace, and technical review
+
+**User request:** The user requested a new testable view of the customer application, Android build and offline-workspace verification, exact checkout/push endpoint details, and a code review of AAC-LC/M4A audio handling.
+
+**Completed:** The nested self-hosted website source now demonstrates the full customer journey with representative local data. The Android customer app has an opt-in encrypted offline document cache keyed by non-enumerable SHA-256 references, temporary scoped viewer access, and clear-on-sign-out behavior. `testDebugUnitTest` and `assembleDebug` both passed after the change. `docs/CUSTOMER_APP_TECHNICAL_REVIEW.md` records the tested behavior, implementation settings, endpoint paths, and release-owner prerequisites.
+
+**Boundary:** The browser preview cannot record audio, contact a Portal, register a real device, cache a real document, or perform payment. The native Android APK can exercise those device paths only after it is configured against a non-production Portal environment. No Portal records, credentials, card data, provider credential, or signing material is included in the preview source or test artifact.

@@ -1,0 +1,11 @@
+- [x] Audit Portal customer routes, services, data controls, and present mobile API coverage; confirm the web-only administration boundary.
+- [x] Define the mobile customer-parity OpenAPI additions, permissions, payload limits, idempotency, media retention, and payment-handoff controls.
+- [x] Implement Portal mobile APIs for documents, files, audio uploads/playback metadata, workflow stages, intake, MNDA/NDAs, and deliverables.
+- [x] Implement Portal mobile APIs for invoices, Portal checkout handoff, messages, notifications, and support tickets.
+- [x] Implement Portal mobile APIs for customer community, workspaces, referrals, security controls, account recovery, and public information.
+- [x] Expand the iOS customer application for all released customer Portal journeys, native audio recording, file handling, and protected web handoffs.
+- [x] Expand the Android customer application for the matching released customer Portal journeys, native audio recording, file handling, and protected web handoffs.
+- [x] Add device-push registration, audio/file security controls, accessibility coverage, privacy updates, and parity documentation.
+- [x] Run Portal and Android validation, document required iOS/Xcode testing, and correct implementation defects.
+- [x] Update all session records and transcripts, commit the Portal and native repositories, and synchronize both to GitHub.
+- [ ] Deliver the audited feature-parity result, build evidence, and release-owner configuration requirements.

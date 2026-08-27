@@ -90,3 +90,5 @@ The mark is a **gold packet-square**: an architectural outlined square containin
 - Keep display typography compact and decisive, but preserve enough tracking and line-height for executive clarity at all viewport sizes.
 - Treat every light section as a controlled document surface with ruled structure, gold sequence marks, operational labels, and restrained borders rather than generic SaaS cards.
 - Keep imagery within one world: dark executive materials, packet/document geometry, and subtle teal-gold signal accents.
+- On small screens, position a compact ReadyPackets device briefing immediately before the live phone; detailed evidence follows the device rather than delaying it.
+- Treat self-hosting and integration visuals as packet-surface diagrams with controlled client-to-Portal routes, never generic neon infrastructure art.
